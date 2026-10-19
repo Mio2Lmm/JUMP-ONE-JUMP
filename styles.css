@@ -1178,6 +1178,15 @@ kbd {
     gap: 16px;
   }
 
+  /* grid 子项默认 min-width:auto 会被内容（如四列参数表）撑破视口 */
+  .ui-view > * {
+    min-width: 0;
+  }
+
+  .ui-table-wrap {
+    max-width: 100%;
+  }
+
   .ui-page-header {
     flex-wrap: wrap;
     gap: 12px;
@@ -1222,5 +1231,27 @@ kbd {
 
   .ui-nav-item span {
     font-size: 12px;
+  }
+
+  /* 参数页：标题与「重新读取/保存参数」按钮并排会撑破 390px 屏 */
+  .ui-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ui-page-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ui-page-actions > .ui-btn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .ui-config-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
