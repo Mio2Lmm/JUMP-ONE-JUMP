@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Mio, 2026-10-19">
+  <meta name="description" content="跳一跳助手控制台（静态演示版）：查看运行状态、距离分段参数与校准说明，演示数据为模拟。">
+  <meta property="og:title" content="跳一跳助手 · 桌面控制台">
+  <meta property="og:description" content="跳一跳助手控制台（静态演示版）：查看运行状态、距离分段参数与校准说明，演示数据为模拟。">
+  <meta property="og:type" content="website">
+  <title>跳一跳助手</title>
+  <link rel="stylesheet" href="vendor/bootstrap.min.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%228%22%20fill%3D%22%23eff6ff%22%2F%3E%3Cpath%20d%3D%22M11%2021l10-10M13%2011h8v8%22%20fill%3D%22none%22%20stroke%3D%22%232563eb%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ui-app">
+    <header class="ui-topbar">
+      <div class="ui-brand">
+        <span class="ui-brand-mark" aria-hidden="true">
+          <i data-lucide="move-up-right"></i>
+        </span>
+        <span class="ui-brand-copy">
+          <strong>跳一跳助手</strong>
+          <span>桌面控制台</span>
+        </span>
+      </div>
+      <div class="ui-topbar-actions">
+        <span class="ui-connection" id="connectionBadge" role="status">
+          <span class="ui-connection-dot" aria-hidden="true"></span>
+          <span id="connectionText">正在连接</span>
+        </span>
+        <button class="ui-btn ui-btn-secondary" id="topStopButton" type="button" disabled>
+          <i data-lucide="square" aria-hidden="true"></i>
+          <span>停止接管</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="ui-shell">
+      <aside class="ui-sidebar">
+        <nav class="ui-nav" aria-label="主导航">
+          <button class="ui-nav-item is-active" type="button" data-view="dashboard" aria-current="page">
+            <i data-lucide="layout-dashboard" aria-hidden="true"></i>
+            <span>控制台</span>
+          </button>
+          <button class="ui-nav-item" type="button" data-view="parameters">
+            <i data-lucide="sliders-horizontal" aria-hidden="true"></i>
+            <span>参数校准</span>
+          </button>
+          <button class="ui-nav-item" type="button" data-view="guide">
+            <i data-lucide="book-open" aria-hidden="true"></i>
+            <span>使用说明</span>
+          </button>
+        </nav>
+        <div class="ui-sidebar-footer">
+          <div class="ui-author" aria-label="作者 Mio，2026年10月19日">
+            <span class="ui-author-label">作者</span>
+            <strong>Mio</strong>
+            <time datetime="2026-10-19">2026/10/19</time>
+          </div>
+          <div class="ui-target-info">
+            <span>当前程序</span>
+            <strong id="sidebarTargetName">正在读取</strong>
+          </div>
+          <button class="ui-nav-item ui-nav-danger" id="exitButton" type="button">
+            <i data-lucide="power" aria-hidden="true"></i>
+            <span>退出面板</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="ui-main">
+        <div class="ui-content">
+          <section class="ui-view is-active" data-panel="dashboard" aria-labelledby="dashboardTitle">
+            <header class="ui-page-header">
+              <div>
+                <h1 id="dashboardTitle">控制台</h1>
+                <p>启动助手，在游戏窗口内依次标记起点和目标。</p>
+              </div>
+              <div class="ui-page-actions">
+                <button class="ui-btn ui-btn-primary" id="startButton" type="button">
+                  <i data-lucide="play" aria-hidden="true"></i>
+                  <span>开始接管</span>
+                </button>
+                <button class="ui-btn ui-btn-secondary" id="stopButton" type="button" disabled>
+                  <i data-lucide="square" aria-hidden="true"></i>
+                  <span>停止接管</span>
+                </button>
+              </div>
+            </header>
+
+            <section class="ui-runtime-band" id="runtimeBand" aria-live="polite">
+              <div class="ui-runtime-icon is-idle" id="runtimeIcon">
+                <i class="ui-runtime-icon-idle" data-lucide="circle-pause" aria-hidden="true"></i>
+                <i class="ui-runtime-icon-running" data-lucide="activity" aria-hidden="true"></i>
+              </div>
+              <div class="ui-runtime-copy">
+                <div class="ui-runtime-heading">
+                  <span class="ui-status-badge is-idle" id="runtimeBadge">
+                    <span class="ui-badge-dot" aria-hidden="true"></span>
+                    <span id="runtimeLabel">未运行</span>
+                  </span>
+                  <span class="ui-runtime-caption" id="runtimeCaption">等待启动</span>
+                </div>
+                <p id="runtimeDescription">启动后，助手会在游戏窗口内监听右键操作。</p>
+              </div>
+              <dl class="ui-runtime-facts">
+                <div>
+                  <dt>进程</dt>
+                  <dd id="runtimePid">--</dd>
+                </div>
+                <div>
+                  <dt>运行时长</dt>
+                  <dd id="runtimeUptime">--</dd>
+                </div>
+              </dl>
+            </section>
+
+            <div class="ui-dashboard-grid">
+              <section class="ui-panel ui-control-panel">
+                <header class="ui-panel-header">
+                  <div>
+                    <h2>操作流程</h2>
+                    <p>标记完成后，助手会自动执行一次长按跳跃。</p>
+                  </div>
+                </header>
+                <ol class="ui-step-list">
+                  <li>
+                    <span class="ui-step-index">1</span>
+                    <span><strong>标记起点</strong><small>右键点击棋子底部中心</small></span>
+                  </li>
+                  <li>
+                    <span class="ui-step-index">2</span>
+                    <span><strong>标记目标</strong><small>右键点击目标平台中心</small></span>
+                  </li>
+                  <li>
+                    <span class="ui-step-index">3</span>
+                    <span><strong>继续下一跳</strong><small>跳跃完成后重复前两步</small></span>
+                  </li>
+                </ol>
+                <div class="ui-shortcut-strip">
+                  <span><kbd>Esc</kbd> 停止监听</span>
+                  <span><kbd>右上角</kbd> 鼠标急停</span>
+                </div>
+              </section>
+
+              <section class="ui-panel ui-summary-panel">
+                <header class="ui-panel-header">
+                  <div>
+                    <h2>当前参数</h2>
+                    <p>启动时从配置文件读取。</p>
+                  </div>
+                  <button class="ui-icon-btn" type="button" data-view="parameters" title="编辑参数" aria-label="编辑参数">
+                    <i data-lucide="settings-2" aria-hidden="true"></i>
+                  </button>
+                </header>
+                <dl class="ui-summary-list">
+                  <div>
+                    <dt>基础系数 K</dt>
+                    <dd id="summaryK">--</dd>
+                  </div>
+                  <div>
+                    <dt>偏移量 B</dt>
+                    <dd id="summaryB">--</dd>
+                  </div>
+                  <div>
+                    <dt>距离分段</dt>
+                    <dd id="summarySegments">--</dd>
+                  </div>
+                  <div>
+                    <dt>游戏区域</dt>
+                    <dd id="summaryRegion">--</dd>
+                  </div>
+                </dl>
+                <button class="ui-btn ui-btn-secondary ui-btn-block" type="button" data-view="parameters">
+                  <i data-lucide="sliders-horizontal" aria-hidden="true"></i>
+                  <span>查看并校准参数</span>
+                </button>
+              </section>
+            </div>
+
+            <section class="ui-panel ui-log-panel">
+              <header class="ui-panel-header">
+                <div>
+                  <h2>运行日志</h2>
+                  <p id="logCaption">等待助手启动</p>
+                </div>
+                <button class="ui-icon-btn" id="clearLogsButton" type="button" title="清空当前显示" aria-label="清空当前显示">
+                  <i data-lucide="trash-2" aria-hidden="true"></i>
+                </button>
+              </header>
+              <div class="ui-log-output" id="logOutput" role="log" aria-label="助手运行日志">
+                <div class="ui-log-empty" id="logEmpty">
+                  <i data-lucide="terminal" aria-hidden="true"></i>
+                  <span>启动助手后，运行信息会显示在这里。</span>
+                </div>
+              </div>
+            </section>
+          </section>
+
+          <section class="ui-view" data-panel="parameters" aria-labelledby="parametersTitle" hidden>
+            <header class="ui-page-header">
+              <div>
+                <h1 id="parametersTitle">参数校准</h1>
+                <p>修改后会在下一次启动助手时生效。</p>
+              </div>
+              <div class="ui-page-actions">
+                <button class="ui-btn ui-btn-secondary" id="reloadConfigButton" type="button">
+                  <i data-lucide="refresh-cw" aria-hidden="true"></i>
+                  <span>重新读取</span>
+                </button>
+                <button class="ui-btn ui-btn-primary" id="saveConfigButton" type="submit" form="configForm">
+                  <i data-lucide="save" aria-hidden="true"></i>
+                  <span>保存参数</span>
+                </button>
+              </div>
+            </header>
+
+            <form id="configForm" novalidate>
+              <section class="ui-panel">
+                <header class="ui-panel-header">
+                  <div>
+                    <h2>基础参数</h2>
+                    <p>按压时长计算公式为 <code>k × 距离 + b</code>。</p>
+                  </div>
+                  <span class="ui-note" id="configSaveHint">停止接管后可保存</span>
+                </header>
+                <div class="ui-form-grid">
+                  <label class="ui-field">
+                    <span>基础系数 K</span>
+                    <input class="ui-input" id="configK" name="k" type="number" min="0.1" max="10" step="0.01" required>
+                    <small>控制每像素距离对应的按压时长。</small>
+                  </label>
+                  <label class="ui-field">
+                    <span>偏移量 B</span>
+                    <input class="ui-input" id="configB" name="b" type="number" min="-500" max="500" step="0.1" required>
+                    <small>用于修正固定时间偏差，通常接近 0。</small>
+                  </label>
+                </div>
+              </section>
+
+              <section class="ui-panel">
+                <header class="ui-panel-header">
+                  <div>
+                    <h2>距离分段</h2>
+                    <p>不同距离区间可以使用独立的系数和偏移量。</p>
+                  </div>
+                </header>
+                <div class="ui-table-wrap">
+                  <table class="ui-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">起始距离</th>
+                        <th scope="col">结束距离</th>
+                        <th scope="col">系数 K</th>
+                        <th scope="col">偏移量 B</th>
+                      </tr>
+                    </thead>
+                    <tbody id="segmentRows"></tbody>
+                  </table>
+                </div>
+                <div class="ui-empty-table" id="segmentEmpty" hidden>
+                  当前配置没有距离分段，基础参数仍会生效。
+                </div>
+              </section>
+
+              <section class="ui-config-meta">
+                <div>
+                  <span>配置文件</span>
+                  <strong id="configPath">正在读取</strong>
+                </div>
+                <div>
+                  <span>游戏区域</span>
+                  <strong id="configRegion">--</strong>
+                </div>
+              </section>
+            </form>
+          </section>
+
+          <section class="ui-view" data-panel="guide" aria-labelledby="guideTitle" hidden>
+            <header class="ui-page-header">
+              <div>
+                <h1 id="guideTitle">使用说明</h1>
+                <p>先启动助手，再在游戏窗口内标记起点和目标。</p>
+              </div>
+            </header>
+
+            <div class="ui-guide-grid">
+              <section class="ui-panel">
+                <header class="ui-panel-header">
+                  <div>
+                    <h2>开始前</h2>
+                    <p>确保游戏可以被正常点击。</p>
+                  </div>
+                </header>
+                <ol class="ui-guide-list">
+                  <li>把“跳一跳”窗口置顶并保持无遮挡。</li>
+                  <li>确认游戏窗口可以接收鼠标操作。</li>
+                  <li>在控制台点击“开始接管”。</li>
+                </ol>
+              </section>
+
+              <section class="ui-panel">
+                <header class="ui-panel-header">
+                  <div>
+                    <h2>每一跳</h2>
+                    <p>右键只负责取点，左键长按由助手完成。</p>
+                  </div>
+                </header>
+                <ol class="ui-guide-list">
+                  <li>右键点击棋子底部中心，记录起点。</li>
+                  <li>右键点击目标平台中心，执行跳跃。</li>
+                  <li>落点确认后，重复以上操作。</li>
+                </ol>
+              </section>
+            </div>
+
+            <section class="ui-panel">
+              <header class="ui-panel-header">
+                <div>
+                  <h2>快捷操作</h2>
+                  <p>随时可以停止监听。</p>
+                </div>
+              </header>
+              <div class="ui-table-wrap">
+                <table class="ui-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">操作</th>
+                      <th scope="col">作用</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><kbd>Esc</kbd></td><td>停止监听并退出助手进程</td></tr>
+                    <tr><td>鼠标移到屏幕左上角</td><td>触发原程序的急停保护</td></tr>
+                    <tr><td>控制台“停止接管”</td><td>先发送 Esc，未响应时再结束进程</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="ui-callout">
+              <i data-lucide="triangle-alert" aria-hidden="true"></i>
+              <div>
+                <strong>参数调整建议</strong>
+                <p>跳过头时减小对应的 K，没跳到时增大 K。每次调整 0.02 到 0.05，观察几跳后再继续。</p>
+              </div>
+            </aside>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="ui-toast-region" id="toastRegion" aria-live="polite"></div>
+
+  <dialog class="ui-dialog" id="confirmDialog">
+    <div class="ui-dialog-icon" id="confirmIcon">
+      <i data-lucide="square" aria-hidden="true"></i>
+    </div>
+    <div class="ui-dialog-copy">
+      <h2 id="confirmTitle">停止接管</h2>
+      <p id="confirmText">确认停止当前助手吗？</p>
+    </div>
+    <div class="ui-dialog-actions">
+      <button class="ui-btn ui-btn-secondary" id="confirmCancel" type="button">取消</button>
+      <button class="ui-btn ui-btn-danger" id="confirmAction" type="button">确认停止</button>
+    </div>
+  </dialog>
+
+  <div class="ui-exit-screen" aria-live="polite">
+    <span class="ui-exit-mark" aria-hidden="true">
+      <i data-lucide="check"></i>
+    </span>
+    <h2>控制面板已退出</h2>
+    <p>本地服务已经停止，可以关闭此窗口。</p>
+  </div>
+
+  <script src="vendor/bootstrap.bundle.min.js"></script>
+  <script src="vendor/lucide.min.js"></script>
+  <script src="mock-api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
