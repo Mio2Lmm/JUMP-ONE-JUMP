@@ -1,0 +1,71 @@
+{
+  "GAME_REGION": [
+    1886,
+    223,
+    630,
+    1160
+  ],
+  "PIECE_HSV_LOW": [
+    90,
+    55,
+    25
+  ],
+  "PIECE_HSV_HIGH": [
+    150,
+    255,
+    240
+  ],
+  "PIECE_MIN_AREA": 280,
+  "TARGET_HSV_LOW": [
+    0,
+    0,
+    80
+  ],
+  "TARGET_HSV_HIGH": [
+    180,
+    255,
+    215
+  ],
+  "TARGET_MIN_AREA": 1800,
+  "TARGET_CENTER_OFFSET": [
+    0.0,
+    0.0
+  ],
+  "TARGET_MAX_DX": 520.0,
+  "TARGET_CLEARANCE_DX": 32.0,
+  "CLICK_POINT": null,
+  "REPLAY_POINT": [
+    462.0,
+    997.0
+  ],
+  "REPLAY_MATCH_THRESHOLD": 0.75,
+  "REPLAY_WAIT_S": 1.0,
+  "K": 2.15,
+  "B": 0.0,
+  "k": 2.15,
+  "b": 0.0,
+  "segments": [
+    {
+      "d_min": 0,
+      "d_max": 200,
+      "k": 2.1,
+      "b": 0.0
+    },
+    {
+      "d_min": 200,
+      "d_max": 420,
+      "k": 2.15,
+      "b": 0.0
+    },
+    {
+      "d_min": 420,
+      "d_max": 720,
+      "k": 2.1,
+      "b": 0.0
+    }
+  ],
+  "WAIT_S": 1.2,
+  "SUCCESS_THRESHOLD": 8.0,
+  "W": 630,
+  "H": 1160
+}
